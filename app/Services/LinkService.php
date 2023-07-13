@@ -91,6 +91,7 @@ class LinkService
 					$comments = $tr->filter('div.description')->text();
 					$title = $linkElement->text();
 					$href = $linkElement->attr('href');
+					
 					$result = $this->createLinksAndAttachToTags($title,$href,$comments,$tagsArray);
 					
 					if ($result) {
@@ -105,10 +106,12 @@ class LinkService
 	
 	public function createLinksAndAttachToTags($title,$href,$comments,$tagsArray): bool{
 		$newLink = new Link();
+		//Check if link with title is already created
 		$checkLinkExists = Link::where('href', $href)
 			->where('title',$title)
 			->exists();
 		if (!$checkLinkExists) {
+			// Check if the url is valid
 			$validity = $this->isUrlValid($href);
 			$newLink->fill([
 				'title' => $title,
