@@ -30,7 +30,8 @@ class LinkService
 			$response = $client->get($url);
 			$status = $response->getStatusCode();
 			
-			if ($status >= 200 && $status <= 302) {
+			// Status between 200 and 308 means url is live without error
+			if ($status >= 200 && $status <= 308) {
 				return true;
 			}
 		} catch (GuzzleException $e) {
