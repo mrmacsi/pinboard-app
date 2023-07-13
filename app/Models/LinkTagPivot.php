@@ -5,13 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Link extends Model
+class LinkTagPivot extends Model
 {
     use HasFactory;
-	public $timestamps = false;
-	
-	public function tags()
-	{
-		return $this->belongsToMany(Tag::class, 'link_tag_pivot');
-	}
+	protected $table = 'link_tag_pivot';
 }
