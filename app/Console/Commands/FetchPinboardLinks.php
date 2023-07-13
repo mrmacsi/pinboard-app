@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Link;
 use App\Services\LinkService;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
@@ -41,6 +42,24 @@ class FetchPinboardLinks extends Command
 				$match = $this->linkService->checkIfTagExists($tagsArray);
 				if ($match) {
 					// Filter data from html
+					$linkElement = $tr->filter('a.bookmark_title');
+					$comments = $tr->filter('div.description')->text();
+					$title = $linkElement->text();
+					$href = $linkElement->attr('href');
+					
+					$newLink = new Link();
+					$validity = $this->linkService->isUrlValid($href);
+					$newLink->fill([
+						'title' => $title,
+						'href' => $href,
+						'comments' => $comments,
+						'valid' => $validity
+					]);
+					$newLink->save();
+					
+					// Save the tags to table and attach to link
+					$ids = $this->linkService->addTagsAndGetIds($tagsArray);
+					$newLink->tags()->attach($ids);
 				}
 			}
 		});

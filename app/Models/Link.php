@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Link extends Model
 {
-    use HasFactory;
+	use HasFactory;
 	public $timestamps = false;
+	protected $fillable = ['title','href','comments','valid'];
 	
 	public function tags()
 	{
