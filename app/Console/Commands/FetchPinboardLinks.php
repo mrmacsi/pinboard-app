@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\LinkService;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Symfony\Component\DomCrawler\Crawler;
@@ -12,9 +13,10 @@ class FetchPinboardLinks extends Command
 
     protected $description = 'Command description';
 	
-	// Use dependency injection to inject the HTTP client as a service
+	// Use dependency injection to inject the HTTP client as a service, inject link service
 	public function __construct(
-		protected Client $client
+		protected Client $client,
+		protected LinkService $linkService
 	)
 	{
 		parent::__construct();
@@ -23,7 +25,7 @@ class FetchPinboardLinks extends Command
 	public function handle()
 	{
 		// Use the injected client to make the HTTP request
-		$response = $this->client->get('https://pinboard.in/u:alasdairw?per_page=10');
+		$response = $this->client->get('https://pinboard.in/u:alasdairw?per_page=120');
 		$html = $response->getBody()->getContents();
 		
 		$crawler = new Crawler($html);
@@ -35,6 +37,11 @@ class FetchPinboardLinks extends Command
 				$tagsArray = $tags->each(function ($tag) {
 					return $tag->text();
 				});
+				// Check links tags are matching one of the wanted tags
+				$match = $this->linkService->checkIfTagExists($tagsArray);
+				if ($match) {
+					// Filter data from html
+				}
 			}
 		});
 		
